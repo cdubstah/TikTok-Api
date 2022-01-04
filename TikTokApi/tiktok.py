@@ -1552,8 +1552,10 @@ class TikTokApi:
 
     def __extract_tag_contents(self, html):
         next_json = re.search(r'id=\"__NEXT_DATA__\"\s+type=\"application\/json\"\s*[^>]+>\s*(?P<next_data>[^<]+)', html)
-
         if (next_json):
+            nonce_start = '<head nonce="'
+            nonce_end = '">'
+            nonce = html.split(nonce_start)[1].split(nonce_end)[0]
             j_raw = html.split(
                 '<script id="__NEXT_DATA__" type="application/json" nonce="%s" crossorigin="anonymous">'
                 % nonce
@@ -1561,12 +1563,10 @@ class TikTokApi:
             return j_raw
         else:
             sigi_json = re.search(r'>\s*window\[[\'"]SIGI_STATE[\'"]\]\s*=\s*(?P<sigi_state>{.+});', html)
-
-            j = json.loads(sigi_json.group(1))
-            with open('.{}'.format('december'), 'w') as f:
-                f.write(json.dumps(j))
-
-            return sigi_json.group(1)
+            if sigi_json:
+                return sigi_json.group(1)
+            else:
+                raise Exception('no json found')
 
     # Process the kwargs
     def __process_kwargs__(self, kwargs):
