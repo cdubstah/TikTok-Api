@@ -4,6 +4,7 @@ import os
 import random
 import string
 import time
+import re
 from urllib.parse import quote, urlencode
 
 import requests
@@ -1298,7 +1299,8 @@ class TikTokApi:
             device_id,
         ) = self.__process_kwargs__(kwargs)
         kwargs["custom_device_id"] = device_id
-        return self.get_user(username, **kwargs)["userInfo"]["user"]
+        user = self.get_user(username, **kwargs)
+        return user
 
     def get_user(self, username, **kwargs) -> dict:
         """Gets the full exposed user object
@@ -1338,9 +1340,10 @@ class TikTokApi:
                 logging.error("Tiktok response: \n " + t)
             raise TikTokCaptchaError()
 
-        user = json.loads(j_raw)["props"]["pageProps"]
+        json_raw = json.loads(j_raw)
+        user = json_raw["UserModule"]["users"][username]
 
-        if user["serverCode"] == 404:
+        if json_raw["UserPage"]["statusCode"] == 404:
             raise TikTokNotFoundError(
                 "TikTok user with username {} does not exist".format(username)
             )
@@ -1548,14 +1551,22 @@ class TikTokApi:
         return urlencode(query)
 
     def __extract_tag_contents(self, html):
-        nonce_start = '<head nonce="'
-        nonce_end = '">'
-        nonce = html.split(nonce_start)[1].split(nonce_end)[0]
-        j_raw = html.split(
-            '<script id="__NEXT_DATA__" type="application/json" nonce="%s" crossorigin="anonymous">'
-            % nonce
-        )[1].split("</script>")[0]
-        return j_raw
+        next_json = re.search(r'id=\"__NEXT_DATA__\"\s+type=\"application\/json\"\s*[^>]+>\s*(?P<next_data>[^<]+)', html)
+
+        if (next_json):
+            j_raw = html.split(
+                '<script id="__NEXT_DATA__" type="application/json" nonce="%s" crossorigin="anonymous">'
+                % nonce
+            )[1].split("</script>")[0]
+            return j_raw
+        else:
+            sigi_json = re.search(r'>\s*window\[[\'"]SIGI_STATE[\'"]\]\s*=\s*(?P<sigi_state>{.+});', html)
+
+            j = json.loads(sigi_json.group(1))
+            with open('.{}'.format('december'), 'w') as f:
+                f.write(json.dumps(j))
+
+            return sigi_json.group(1)
 
     # Process the kwargs
     def __process_kwargs__(self, kwargs):
