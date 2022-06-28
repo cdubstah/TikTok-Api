@@ -958,7 +958,7 @@ class TikTokApi:
         )
 
         j_raw = self.__extract_tag_contents(r.text)
-        return json.loads(j_raw)["props"]["pageProps"]["musicInfo"]
+        return json.loads(j_raw)["MobileMusicModule"]["musicInfo"]
 
     def get_music_object_full_by_api(self, id, **kwargs):
         """Returns a music object for a specific sound id, but using the API rather than HTML requests.
@@ -1730,14 +1730,23 @@ class TikTokApi:
         return urlencode(query)
 
     def __extract_tag_contents(self, html):
+
         nonce_start = '<head nonce="'
-        nonce_end = '">'
-        nonce = html.split(nonce_start)[1].split(nonce_end)[0]
-        j_raw = html.split(
-            '<script id="__NEXT_DATA__" type="application/json" nonce="%s" crossorigin="anonymous">'
-            % nonce
-        )[1].split("</script>")[0]
-        return j_raw
+        if  nonce_start in html:
+            nonce_end = '">'
+            nonce = html.split(nonce_start)[1].split(nonce_end)[0]
+            j_raw = html.split(
+                '<script id="__NEXT_DATA__" type="application/json" nonce="%s" crossorigin="anonymous">'
+                % nonce
+            )[1].split("</script>")[0]
+            return j_raw
+        else:
+            j_raw= html.split('<script id="SIGI_STATE" type="application/json">')[1]
+            j_raw = j_raw.split('</script>')[0]
+            if j_raw:
+                return j_raw
+            else:
+                raise Exception("Could Not Parse JSON")
 
     # Process the kwargs
     def __process_kwargs__(self, kwargs):
