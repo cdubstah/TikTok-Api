@@ -958,7 +958,7 @@ class TikTokApi:
         )
 
         j_raw = self.__extract_tag_contents(r.text)
-        return json.loads(j_raw)["MobileMusicModule"]["musicInfo"]
+        return json.loads(j_raw)['__DEFAULT_SCOPE__']['mobile.musicPage.musicDetail']['musicInfo']
 
     def get_music_object_full_by_api(self, id, **kwargs):
         """Returns a music object for a specific sound id, but using the API rather than HTML requests.
@@ -1273,7 +1273,7 @@ class TikTokApi:
             device_id,
         ) = self.__process_kwargs__(kwargs)
         kwargs["custom_device_id"] = device_id
-        return self.get_user(username, **kwargs)["userInfo"]["user"]
+        return self.get_user(username, **kwargs)
 
     def get_user(self, username, **kwargs) -> dict:
         """Gets the full exposed user object
@@ -1291,23 +1291,23 @@ class TikTokApi:
         r = requests.get(
             "https://tiktok.com/@{}?lang=en".format(quote(username)),
             headers={
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-                "authority": "www.tiktok.com",
-                "path": "/@{}".format(quote(username)),
-                "Accept-Encoding": "gzip, deflate",
-                "Connection": "keep-alive",
-                "Host": "www.tiktok.com",
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36",
+                'accept': '*/*',
+                'cookie': 'ttwid=1%7Ci4zIP47BoELpBo560dihPBuAFBrgHk_SzaLG0wyVCmI%7C1671322436%7C1639c0f3447e97256f47a9f123a7312f1d0acb56c418a35c7549fa5cf5291b8b; tt_csrf_token=F0QQ8a7j-VM8guzMKz_9Ny9Ahgh_OUQ5bf14; tt_chain_token=NidBw1pftfgY3W3lie7oQQ==; msToken=bYcel3fXfgAa6hLcZp0lo_5O9bHO_6r8kPw_R_3s65ZmPJKPLdnAmM82xv5ocqx-gPc8N5Y6OrodVIpJqN6DH29dt9JW9OFRlsspW0N24_l_XKZlctilzY9SFV-8; bm_sz=31483D010C441BC6B6C21D28311FB529~YAAQZ6MwF1+X0xWFAQAAppGUIhKY3WylKgNGcP0jtYpiJ8Y+U0iaifl3jO3idzvuHUmsU68swqM3O2cdPewCVtfwKW9Gkz+fF1GIO4ciyEpkhyfCqV6CFjMjVkJDWQJtjSLP1J+OIAD7mKVjcZdEq8Hba1G+Swxf8pFBdcNyqdcnSCyGCuIqV5GakFrC7GkO4tY1p+wCvyMJobsxN0U1FubjqUgkbYgbIzZopaXQab9zTAZfX0BI+afhx8l28NjPd2a3/yUq4HnjJQjgWApNVzWqqTop2PWu9Flz0IfL802pXuQ=~4338226~3556919; _abck=0B4911DFA7E0DC0ED211A977D8F61692~-1~YAAQZ6MwF2KX0xWFAQAA6ZOUIgnUialBuoA1ews+zDxcKoJj7Gg+brjHJ6NtS9PkFboC6EOlKoEC5Gaa8shOHBo9zFVkTG6vwn+diclo3LqfEgmxZEWXSxp1BMucuR8Iw7bzVZ4GG/NVz1UoMbPCAXiqUwbed1CmHYL6i/JD8VDG0n8xuK6ecMPuBVqDkbnuh94248LNEWic95ILbZQ2YWGGDIorGgf8Y/iuGJrA0jUJzMMPAY6dxZ2pHkcORBQOFCrasGTyMdr0vcgGx7x5LVefrrPplwFH5FjIgi/GjFogfep75YYxtjpeKWpUkBt/EBayif5iYhsd2AMnBgv5mkvgijp8DHK0+PG27Afb2IsA9+g1T7xf2I2V2ABhmitC6FQokE7ydkp91jU=~-1~||1-YBEVWvuLXW-1-10-1000-2||~-1; ak_bmsc=4562B190AC02E452E0D8A748C71814ED~000000000000000000000000000000~YAAQZ6MwF2OX0xWFAQAAxJWUIhIO20+zn4/slJGKSpuMz4E/FhznY/sL2ELL2GZplUw+Kp6Yh4FtXpe96dkI6yTzL9bGiP4RA1IS1nPC2ivTcemc0XHaKe/ipvvgkfRHL3vJboWxQFng9Lnjp9IpXL2kJ280ZxaY7OYby9+D3S+jJyxvBEVv7x9Ttc1IiP/VvEWyH8a6ATyyAOyPu7VDsAE6ewUl4GI+MwBWrGUi3VkbKG2fj889J+t5WxS/j+KurmS4dF2H5Gcg3nU4PnXiXKXdAW9BBATfUK6UaPR20f78WxLDGc2hZ2nbC+krVli5Y/2upW4CCnqyHOwuTkyOmSabqHqd0BCSBvW7Ty8Y3uE/E4mYuYjDceO2uLtMVth28qTfpXBpX66vspd2tkg3jbkHHwPbIL1gACoSqtY58aV0N9m/8a/Tp5UXjKVwxEqbUNJFwzl5AzRyHbOzvqDmX/QCsfG8eHtMTWRD3fQelfzk9yTTUUBLbeYJOoPNt24gmqUqCw61kWd9zxJ8MfX71zP351HbhCJGn7M=',
+                "origin": "www.tiktok.com",
+                "referer": "www.tiktok.com/",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.29 Safari/537.36 Edg/108.0.5359.29",
+                "__len__": "5",
+
             },
             proxies=self.__format_proxy(kwargs.get("proxy", None)),
-            cookies=self.get_cookies(**kwargs),
             **self.requests_extra_kwargs,
         )
 
         t = r.text
 
         try:
-            j_raw = self.__extract_tag_contents(r.text)
+            j_raw = r.text.split('<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application/json">')[0].split(
+                'script id="SIGI_STATE" type="application/json">')[1].split('</script>')[0]
         except IndexError:
             if not t:
                 logging.error("Tiktok response is empty")
@@ -1315,12 +1315,7 @@ class TikTokApi:
                 logging.error("Tiktok response: \n " + t)
             raise TikTokCaptchaError()
 
-        user = json.loads(j_raw)["props"]["pageProps"]
-
-        if user["serverCode"] == 404:
-            raise TikTokNotFoundError(
-                "TikTok user with username {} does not exist".format(username)
-            )
+        user = json.loads(j_raw)['UserModule']
 
         return user
 
@@ -1741,8 +1736,7 @@ class TikTokApi:
             )[1].split("</script>")[0]
             return j_raw
         else:
-            j_raw= html.split('<script id="SIGI_STATE" type="application/json">')[1]
-            j_raw = j_raw.split('</script>')[0]
+            j_raw = html.split('<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application/json">')[1].split('</script>')[0]
             if j_raw:
                 return j_raw
             else:
