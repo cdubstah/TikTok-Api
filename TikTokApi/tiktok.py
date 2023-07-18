@@ -1210,21 +1210,16 @@ class TikTokApi:
         )
 
         t = r.text
-        try:
-            j_raw = self.__extract_tag_contents(r.text)
-        except IndexError:
-            if not t:
-                logging.error("TikTok response is empty")
-            else:
-                logging.error("TikTok response: \n " + t)
-            raise TikTokCaptchaError()
+        j_raw = t.split('script id="SIGI_STATE" type="application/json">')[1].split(
+            '</script>')[0]
+        if not j_raw:
+            raise Exception("Could Not Parse JSON")
 
-        data = json.loads(j_raw)["props"]["pageProps"]
+        if "@" in url and "/video/" in url:
+            post_id = url.split("/video/")[1].split("?")[0]
+        response = json.loads(j_raw)['ItemModule'][post_id]
 
-        if data["serverCode"] == 404:
-            raise TikTokNotFoundError("TikTok with that url doesn't exist")
-
-        return data
+        return response
 
     def discover_hashtags(self, **kwargs) -> dict:
         """Discover page, consists challenges (hashtags)"""
